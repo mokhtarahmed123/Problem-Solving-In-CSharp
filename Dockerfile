@@ -12,19 +12,19 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:8.0-nanoserver-1809 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Day1ITI/Day1ITI.csproj", "Day1ITI/"]
-RUN dotnet restore "./Day1ITI/Day1ITI.csproj"
+COPY ["Train2/Train2.csproj", "Train2/"]
+RUN dotnet restore "./Train2/Train2.csproj"
 COPY . .
-WORKDIR "/src/Day1ITI"
-RUN dotnet build "./Day1ITI.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+WORKDIR "/src/Train2"
+RUN dotnet build "./Train2.csproj" -c %BUILD_CONFIGURATION% -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Day1ITI.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Train2.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Day1ITI.dll"]
+ENTRYPOINT ["dotnet", "Train2.dll"]
