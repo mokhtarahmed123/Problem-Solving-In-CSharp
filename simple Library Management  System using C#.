@@ -1,5 +1,151 @@
+namespace OOPExam;
+
+internal class Program
+{
+    static void Main(string[] args)
+    {
+       
+        Library library = new Library();
+
+        library.AddBook(new Book { BookID = 1, Title = "PHP", Author = "Mousa", ISBN = "128156" });
+        library.AddBook(new Book { BookID = 2, Title = ".NET", Author = "Ahmed", ISBN = "123356" });
+        library.AddBook(new Book { BookID = 3, Title = "Python", Author = "Abdo", ISBN = "1385651" });
+        Member member1 = new Member { MemberID = 1, Name = "Mohamed", Email = "Mohamed@gmail.com" };
+        Member member2 = new Member { MemberID = 3, Name = "Alaa", Email = "Alaa@gmail.com" };
+        Member member3 = new Member { MemberID = 7, Name = "Mai", Email = "Mai@gmail.com" };
+        PremiumMember premiumMember1 = new PremiumMember { MemberID = 2, Name = "Youness", Email = "Youness@gmail.com" };
+        PremiumMember premiumMember2= new PremiumMember { MemberID = 5, Name = "Magdy", Email = "Magdy@gmail.com" };
+        PremiumMember premiumMember3 = new PremiumMember { MemberID = 6, Name = "Ahmed", Email = "Ahmed@gmail.com" };
+        library.AddMember(member1);
+        library.AddPremiumMembers(premiumMember1);
+        Console.WriteLine(library.BorrowBook(1, 1)); 
+        Console.WriteLine(library.BorrowBook(2, 2)); 
+        Console.WriteLine(library.ReturnBook(1, 1)); 
+
+
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace OOPExam
+{
+    public class PremiumMember :  Member, INotification
+
+    {
+
+        public decimal MonthlyFee { get; } = 3;
+        public double DiscountRate { get; } = 0.2;
+
+    }
+
+
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OOPExam
+{
+    public class Member : Library,INotification
+    {
+        public int MemberID { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public List<Book> BorrowedBooks { get; set; } = new List<Book>();
+        public string SendNotification(string message)
+        {return $"You {message} the Book";}
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+namespace OOPExam
+{
+    public class Library
+    {
+        public int count = 0;
+        public List<Book> Books { get; set; } = new List<Book>();
+        public List<Member> Members { get; set; } = new List<Member>();
+        public List<PremiumMember> PremiumMembers { get; set; } = new List<PremiumMember>();
+
+        public void AddBook(Book book)
+        { Books.Add(book); }
+        public void AddMember(Member member)
+        { Members.Add(member); }
+        public void AddPremiumMembers(PremiumMember member)
+        { PremiumMembers.Add(member); }
+
+
+
+        public virtual string BorrowBook(int memberId, int bookId)
+        {
+
+
+            Book book = Books.Find(b => b.BookID == bookId);
+
+            Member member = Members.Find(M => M.MemberID == memberId);
+            if (member == null)
+            {
+                return "  invalid member";
+            }
+            if (book == null)
+            {
+                return "invalid Book";
+            }
+            if (book.IsBorrowed == true)
+            {
+                return $"This book {bookId} is already borrowed. Try borrowing another one.";
+            }
+
+            member.BorrowedBooks.Add(book);
+            book.IsBorrowed = true;
+            Books.Remove(book);
+            return member is PremiumMember ?
+                $"You borrowed '{book.Title}'. (Premium Benefit: 20% discount on late fees)" :
+                $"You borrowed '{book.Title}'."; ;
+        }
+        public string ReturnBook(int memberId, int bookId)
+        {
+            Book book = new Book();
+            book.BookID = bookId;
+            Member member = new Member();
+            member.BorrowedBooks.Remove(book);
+
+            book.IsBorrowed = false;
+            Books.Add(book);
+
+            return $" this book {bookId} is returned ";
+        }
+
+
+
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OOPExam
+{
+    internal interface INotification
+    {
+        public string SendNotification(string message);
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace OOPExam
 {
@@ -11,99 +157,5 @@ namespace OOPExam
         public string ISBN { get; set; }
         public bool IsBorrowed { get; set; } = false;
     }
-
-    public interface INotification
-    {
-        string SendNotification(string message);
-    }
-
-    public class Member : INotification
-    {
-        public int MemberID { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public List<Book> BorrowedBooks { get; set; } = new List<Book>();
-
-        public string SendNotification(string message)
-        {
-            return $"You {message} the Book";
-        }
-    }
-
-    public class PremiumMember : Member
-    {
-        public decimal MonthlyFee { get; } = 3;
-        public double DiscountRate { get; } = 0.2;
-    }
-
-    public class Library
-    {
-        public List<Book> Books { get; set; } = new List<Book>();
-        public List<Member> Members { get; set; } = new List<Member>();
-        public List<PremiumMember> PremiumMembers { get; set; } = new List<PremiumMember>();
-
-        public void AddBook(Book book) => Books.Add(book);
-        public void AddMember(Member member) => Members.Add(member);
-        public void AddPremiumMember(PremiumMember member) => PremiumMembers.Add(member);
-
-        public string BorrowBook(int memberId, int bookId)
-        {
-            Book book = Books.Find(b => b.BookID == bookId);
-            Member member = Members.Find(m => m.MemberID == memberId);
-
-            if (member == null) return "Invalid member.";
-            if (book == null) return "Invalid book.";
-            if (book.IsBorrowed) return $"This book {bookId} is already borrowed. Try borrowing another one.";
-
-            member.BorrowedBooks.Add(book);
-            book.IsBorrowed = true;
-            Books.Remove(book);
-
-            return member is PremiumMember ? 
-                $"You borrowed '{book.Title}'. (Premium Benefit: 20% discount on late fees)" : 
-                $"You borrowed '{book.Title}'.";
-        }
-
-        public string ReturnBook(int memberId, int bookId)
-        {
-            Member member = Members.Find(m => m.MemberID == memberId);
-            Book book = member?.BorrowedBooks.Find(b => b.BookID == bookId);
-
-            if (member == null) return "Invalid member.";
-            if (book == null) return "Invalid book.";
-
-            member.BorrowedBooks.Remove(book);
-            book.IsBorrowed = false;
-            Books.Add(book);
-
-            return $"Book {bookId} is returned.";
-        }
-    }
-
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            Library library = new Library();
-
-            // Adding books
-            library.AddBook(new Book { BookID = 1, Title = "PHP", Author = "Mousa", ISBN = "128156" });
-            library.AddBook(new Book { BookID = 2, Title = ".NET", Author = "Ahmed", ISBN = "123356" });
-            library.AddBook(new Book { BookID = 3, Title = "Python", Author = "Abdo", ISBN = "1385651" });
-
-            // Adding members
-            Member member1 = new Member { MemberID = 1, Name = "Mohamed", Email = "Mohamed@gmail.com" };
-            PremiumMember premiumMember1 = new PremiumMember { MemberID = 2, Name = "Youness", Email = "Youness@gmail.com" };
-
-            library.AddMember(member1);
-            library.AddPremiumMember(premiumMember1);
-
-            // Borrowing books
-            Console.WriteLine(library.BorrowBook(1, 1)); // Member borrows a book
-            Console.WriteLine(library.BorrowBook(2, 2)); // Premium member borrows a book
-
-            // Returning books
-            Console.WriteLine(library.ReturnBook(1, 1)); // Member returns a book
-        }
-    }
 }
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
