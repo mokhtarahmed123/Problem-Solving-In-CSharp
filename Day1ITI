@@ -1,0 +1,87 @@
+using System.Buffers.Text;
+using System.Drawing;
+
+namespace Day1ITI
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            //1.Design a 3D Point Class
+
+            //     -Implement void Display() that displays all point coordinates.
+
+            //- Implement int CalculateDistance(Point p1, Point p2) (e.g.distance based on X coordinate only)
+
+            //2.Design a Fraction Class
+
+            //- Implement void Display().
+
+            //    -Implement Fraction Add(Fraction f1, Fraction f2)
+            //_3DPoint p1 = new _3DPoint(10,0,0);
+            //_3DPoint p2 = new _3DPoint(8,0,0);
+            ////Console.WriteLine(_3DPoint.CalculateDistance(p1, p2));
+            //p2.Display();
+            //////////////////////////////
+            ///
+           // Fraction F1 = new Fraction(1,2);
+           // Fraction F2 = new Fraction(1,4);
+           ////cw F1.FractionAdd(F1 , F2);
+           //double result = F1.FractionAdd(F1, F2);
+           // Console.WriteLine(result);
+
+
+        }
+
+      
+    }
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//namespace Day1ITI
+//{
+//    public class Fraction
+//    {
+//        public double Numerator { get; set; }
+//        public double Denominator { get; set; }
+//        public void Display()
+//        {
+//            Console.WriteLine($"Numerator IS {Numerator} , And the Denominator is {Denominator} ");
+//        }
+//       public double FractionAdd(Fraction F1 , Fraction F2)
+//        {
+//            return ((F1.Numerator * F2.Denominator) + (F2.Numerator * F1.Denominator)) / (F1.Denominator * F2.Denominator);
+//        }
+//        public Fraction(int N , int D)
+//        {
+//            this.Denominator = D;
+//            this.Numerator = N;
+//        }
+//    }
+//}
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//namespace Day1ITI
+//{
+//    public class _3DPoint
+//    {
+//        public double point1 { get; set; }
+//        public double point2 { get; set; }
+//        public double point3 { get; set; }
+//        public void Display()
+//        {
+//            Console.WriteLine($" point1 {point1} , point2 {point2} , point 3 {point3} ");
+//            //Math.Pow(point3 - point1, 2);
+//        }
+//        public int CalculateDistance(_3DPoint p1, _3DPoint p2)
+//        {
+//            return (int)Math.Sqrt(Math.Pow(p1.point1 - p2.point1, 2) + Math.Pow(p1.point2 - p2.point2, 2) + Math.Pow(p1.point3 - p2.point3, 2));
+//        }
+//        public _3DPoint(double po1, double po2, double po3)
+//        {
+//            this.point1 = po1;
+//            this.point2 = po2;
+//            this.point3 = po3;
+
+//        }
+
+//    }
+//}
